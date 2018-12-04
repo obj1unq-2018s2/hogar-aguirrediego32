@@ -643,6 +643,7 @@ function setDocumentScrollTop(ypos)
 <p>Este sistema simula la relaci&oacute;n entre una familia y la casa donde vive para sacar conclusiones.</p> 
 <p>Una casa tiene varias <strong>habitaciones</strong>, las mismas pueden ser de distintos tipos: <em>habitaciones de uso general</em>, <em>dormitorios</em>, <em>ba&ntilde;os</em> y <em>cocinas</em>.<br /> Por supuesto puede haber m&aacute;s de una habitaci&oacute;n del mismo tipo en una casa. Una casa podr&iacute;a tener, por ejemplo, 3 ba&ntilde;os, 2 cocinas, 4 dormitorios y 1 habitaci&oacute;n de uso general.</p> 
 <p>Por su parte, una familia est&aacute; compuesta por varias <strong>personas</strong>.</p> 
+<p>Un dato que debe registrarse, y que va a ser &uacute;til m&aacute;s adelante, es qu&eacute; personas duermen en cada dormitorio.</p> 
 <br /> 
 <h2> <a id="1-nivel-de-confort-de-las-habitaciones" class="anchor" href="#1-nivel-de-confort-de-las-habitaciones" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>1. Nivel de confort de las Habitaciones</h2> 
 <p>De cada habitacion interesa saber el <em>nivel de confort</em> que le aporta a una persona,</p> 
@@ -650,8 +651,8 @@ function setDocumentScrollTop(ypos)
 <ul> 
  <li> <p><strong>Uso general</strong>: no aporta nada adicional</p> </li> 
  <li> <p><strong>Ba&ntilde;o</strong>: Aporta 2 unidades de confort extra si se trata de un ni&ntilde;o de 4 o menos a&ntilde;os. 4 unidades extra si la persona tiene 5 o m&aacute;s a&ntilde;os.</p> </li> 
- <li> <p><strong>Dormitorio</strong>: Si la persona no es uno de los due&ntilde;os del dormitorio no aporta nada extra de confort. Si lo es, aporta como extra 10 dividido la cantidad de due&ntilde;os. (En caso de una habitacion de dos due&ntilde;os, sumar&iacute;a 5 a cada duenio)</p> </li> 
- <li> <p><strong>Cocina</strong>: En caso de que se trate de una persona con habilidades de cocina, aporta una cantidad de unidades de confort extra que se calcula como un porcentaje de la cantidad de metros cuadrados de esa cocina. Ese porcentaje es un valor que se configura al inicio de la ejecuci&oacute;n y es el mismo para todas las cocinas. Ese valor puede cambiar en cualquier momento y las cocinas ya creadas deben poder usar el valor nuevo. Un buen valor por defecto es 10%.<br /> <em>Aclaraci&oacute;n</em>: cualquier persona puede tener habilidades de cocina o no. Una persona que al principio no tiene habilidades de cocina podr&iacute;a aprender y adquirirlas.</p> </li> 
+ <li> <p><strong>Dormitorio</strong>: Si la persona duerme en el dormitorio, entonces aporta como extra 10 dividido la cantidad de personas que duermen en el dormitorio. (En caso de un dormitorio en el que duermen dos personas, sumar&iacute;a 5 a cada una). Caso contrario, no aporta nada extra de confort.</p> </li> 
+ <li> <p><strong>Cocina</strong>: En caso de que se trate de una persona con habilidades de cocina, aporta una cantidad de unidades de confort extra que se calcula como un porcentaje de la cantidad de metros cuadrados de esa cocina.<br /> Ese porcentaje es un valor que se configura al inicio de la ejecuci&oacute;n y es el mismo para todas las cocinas. Ese valor puede cambiar en cualquier momento y las cocinas ya creadas deben usar el valor modificado. Un buen valor por defecto es 10%.<br /> <em>Aclaraci&oacute;n</em>: cualquier persona puede tener habilidades de cocina o no. Una persona que al principio no tiene habilidades de cocina podr&iacute;a aprender y adquirirlas.</p> </li> 
 </ul> 
 <br /> 
 <p><strong>Requerimientos</strong></p> 
@@ -666,7 +667,7 @@ function setDocumentScrollTop(ypos)
 <ul> 
  <li> <p><strong>Uso general</strong>: no hay requisito adicional, siempre puede entrar.</p> </li> 
  <li> <p><strong>Ba&ntilde;o</strong>: Puede entrar si alguno de sus ocupantes es un ni&ntilde;o de 4 a&ntilde;os o menos, ya que se supone que lo va a asistir en sus tareas higi&eacute;nicas.</p> </li> 
- <li> <p><strong>Dormitorio</strong>: Puede entrar cualquier persona que sea due&ntilde;o. En caso de no serlo deben estar presente todos los due&ntilde;os dentro de la habitaci&oacute;n para poder ingresar.</p> </li> 
+ <li> <p><strong>Dormitorio</strong>: Las personas que duermen en el dormitorio pueden entrar siempre. Para que una persona que no duerme en el dormitorio pueda entrar, todos los que duermen en el dormitorio deben estar ocup&aacute;ndolo.</p> </li> 
  <li> <p><strong>Cocina</strong>: Si se trata de una persona con habilidades de cocina, s&oacute;lo puede entrar si no hay ya entre sus ocupantes otra persona con habilidades de cocina.<br /> Es decir, puede haber muchos ocupantes, pero como m&aacute;ximo un cocinero.</p> </li> 
 </ul> 
 <br /> 
@@ -679,20 +680,20 @@ function setDocumentScrollTop(ypos)
 <br /> 
 <p><strong>NOTAS</strong></p> 
 <ul> 
- <li>Asumir que todas las personas no tienen una habitaci&oacute;n inicial (null)</li> 
+ <li>Asumir que al principio, todas las habitaciones est&aacute;n vac&iacute;as, o sea, no tienen ning&uacute;n ocupante, y ninguna persona est&aacute; en una habitaci&oacute;n,</li> 
  <li>Tener en cuenta que que sucede si la persona no pod&iacute;a entrar y se solicita que ingrese igual.</li> 
  <li>Depende de como armes el modelo, podr&iacute;as necesitar o no una casa que contenga a las habitaciones para poder saber en que habitaci&oacute;n est&aacute; una persona. Hay soluciones buenas que la necestian y soluciones buenas que no la necesitan. De todas maneras el concepto de casa surge en el siguiente punto.</li> 
 </ul> 
 <br /> 
 <h2> <a id="3-consultas-sobre-la-familia-y-la-casa" class="anchor" href="#3-consultas-sobre-la-familia-y-la-casa" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>3. Consultas sobre la familia y la casa</h2> 
-<p>En este punto se incorporan al modelo las <strong>familias</strong>. De cada familia conocemos sus integrantes (un conjunto de personas) y la casa en la que viven.<br /> La casa posee un conjunto de habitaciones.</p> 
+<p>En este punto se incorporan al modelo las <strong>familias</strong> y las <strong>casas</strong> (si no se hab&iacute;an agregado antes). De cada familia conocemos sus integrantes (un conjunto de personas) y la casa en la que viven.<br /> La casa posee un conjunto de habitaciones.</p> 
 <br /> 
 <p><strong>Requerimientos</strong></p> 
 <ul> 
  <li>3.1 Saber las habitaciones que est&aacute;n ocupadas de una casa (tienen al menos un ocupante)</li> 
  <li>3.2 Saber los responsables de la casa, el cual es el conjunto formado por el ocupante m&aacute;s viejo de cada habitaci&oacute;n ocupada.</li> 
  <li>3.3 Saber el nivel de confort promedio de la familia, calculado como el nivel de confort de cada miembro dividido cantidad de miembros. El nivel de confort de un miembro es la sumatoria del confort que le aporta cada habitaci&oacute;n de la casa.</li> 
- <li>3.4 Saber si una familia est&aacute; a gusto, Para lo cual tiene que suceder que el nivel de confort promedio de la casa sea superior a 40 y cada miembro <em>se sienta a gusto</em>, lo cual depende de cada persona: 
+ <li>3.4 Saber si una familia est&aacute; a gusto, Para lo cual tiene que suceder que el nivel de confort promedio de la familia sea superior a 40 y cada miembro <em>se sienta a gusto</em>, lo cual depende de cada persona: 
   <ul> 
    <li> <strong>Obsesives</strong>: puede entrar en al menos una habitaci&oacute;n y todas las habitaciones tienen como m&aacute;ximo 2 ocupantes.</li> 
    <li> <strong>Goloses</strong>: puede entrar en al menos una habitaciṕn y al menos un miembro de la familia tiene habilidades de cocina.</li> 
